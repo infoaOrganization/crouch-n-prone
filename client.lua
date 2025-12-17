@@ -5,12 +5,15 @@ local crouched = false
 local proned = false
 -- https://docs.fivem.net/docs/game-references/controls/#controls
 
+-- INPUT_MULTIPLAYER_INFO Z 엎드리기
+local proneKey = 20
+-- INPUT_DUCK LCTRL 웅크리기(앉기기)
+local crouchKey = 36
+
 -- INPUT_SPRINT	Left Shift
 local sprintKey = 21
 -- INPUT_ENTER F
 local enterKey = 23
--- INPUT_DUCK Ctrl
-local crouchKey = 26
 -- INPUT_MOVE_UP_ONLY W
 local wkey = 32
 -- INPUT_MOVE_DOWN_ONLY S
@@ -19,8 +22,7 @@ local sKey = 33
 local aKey = 34
 -- INPUT_MOVE_RIGHT_ONLY D
 local dKey = 35
--- LEFT Ctrl
-local proneKey = 36
+
 
 
 
