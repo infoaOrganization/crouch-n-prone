@@ -3,38 +3,56 @@
 
 local crouched = false
 local proned = false
-crouchKey = 26
-proneKey = 36
+-- https://docs.fivem.net/docs/game-references/controls/#controls
+
+-- INPUT_SPRINT	Left Shift
+local sprintKey = 21
+-- INPUT_ENTER F
+local enterKey = 23
+-- INPUT_DUCK Ctrl
+local crouchKey = 26
+-- INPUT_MOVE_UP_ONLY W
+local wkey = 32
+-- INPUT_MOVE_DOWN_ONLY S
+local sKey = 33
+-- INPUT_MOVE_LEFT_ONLY A
+local aKey = 34
+-- INPUT_MOVE_RIGHT_ONLY D
+local dKey = 35
+-- LEFT Ctrl
+local proneKey = 36
+
+
 
 Citizen.CreateThread( function()
-	while true do 
+	while true do
 		Citizen.Wait( 1 )
 		local ped = GetPlayerPed( -1 )
-		if ( DoesEntityExist( ped ) and not IsEntityDead( ped ) ) then 
+		if ( DoesEntityExist( ped ) and not IsEntityDead( ped ) ) then
 			ProneMovement()
-			DisableControlAction( 0, proneKey, true ) 
-			DisableControlAction( 0, crouchKey, true ) 
-			if ( not IsPauseMenuActive() ) then 
-				if ( IsDisabledControlJustPressed( 0, crouchKey ) and not proned ) then 
+			DisableControlAction( 0, proneKey, true )
+			DisableControlAction( 0, crouchKey, true )
+			if ( not IsPauseMenuActive() ) then
+				if ( IsDisabledControlJustPressed( 0, crouchKey ) and not proned ) then
 					RequestAnimSet( "move_ped_crouched" )
 					RequestAnimSet("MOVE_M@TOUGH_GUY@")
-					
-					while ( not HasAnimSetLoaded( "move_ped_crouched" ) ) do 
+
+					while ( not HasAnimSetLoaded( "move_ped_crouched" ) ) do
 						Citizen.Wait( 100 )
-					end 
-					while ( not HasAnimSetLoaded( "MOVE_M@TOUGH_GUY@" ) ) do 
+					end
+					while ( not HasAnimSetLoaded( "MOVE_M@TOUGH_GUY@" ) ) do
 						Citizen.Wait( 100 )
-					end 		
-					if ( crouched and not proned ) then 
+					end
+					if ( crouched and not proned ) then
 						ResetPedMovementClipset( ped )
 						ResetPedStrafeClipset(ped)
 						SetPedMovementClipset( ped,"MOVE_M@TOUGH_GUY@", 0.5)
-						crouched = false 
+						crouched = false
 					elseif ( not crouched and not proned ) then
 						SetPedMovementClipset( ped, "move_ped_crouched", 0.55 )
 						SetPedStrafeClipset(ped, "move_ped_crouched_strafing")
-						crouched = true 
-					end 
+						crouched = true
+					end
 				elseif ( IsDisabledControlJustPressed(0, proneKey) and not crouched and not IsPedInAnyVehicle(ped, true) and not IsPedFalling(ped) and not IsPedDiving(ped) and not IsPedInCover(ped, false) and not IsPedInParachuteFreeFall(ped) and (GetPedParachuteState(ped) == 0 or GetPedParachuteState(ped) == -1) ) then
 					if proned then
 						ClearPedTasks(ped)
@@ -43,9 +61,9 @@ Citizen.CreateThread( function()
 						proned = false
 					elseif not proned then
 						RequestAnimSet( "move_crawl" )
-						while ( not HasAnimSetLoaded( "move_crawl" ) ) do 
+						while ( not HasAnimSetLoaded( "move_crawl" ) ) do
 							Citizen.Wait( 100 )
-						end 
+						end
 						ClearPedTasksImmediately(ped)
 						proned = true
 						if IsPedSprinting(ped) or IsPedRunning(ped) or GetEntitySpeed(ped) > 5 then
@@ -73,30 +91,30 @@ end
 function ProneMovement()
 	if proned then
 		ped = PlayerPedId()
-		DisableControlAction(0, 23)
-		DisableControlAction(0, 21)
-		if IsControlPressed(0, 32) or IsControlPressed(0, 33) then
+		DisableControlAction(0, enterKey)
+		DisableControlAction(0, sprintKey)
+		if IsControlPressed(0, wkey) or IsControlPressed(0, sKey) then
 			DisablePlayerFiring(ped, true)
-		 elseif IsControlJustReleased(0, 32) or IsControlJustReleased(0, 33) then
+		 elseif IsControlJustReleased(0, wkey) or IsControlJustReleased(0, sKey) then
 		 	DisablePlayerFiring(ped, false)
 		 end
-		if IsControlJustPressed(0, 32) and not movefwd then
+		if IsControlJustPressed(0, wkey) and not movefwd then
 			movefwd = true
 		    TaskPlayAnimAdvanced(ped, "move_crawl", "onfront_fwd", GetEntityCoords(ped), 1.0, 0.0, GetEntityHeading(ped), 1.0, 1.0, 1.0, 47, 1.0, 0, 0)
-		elseif IsControlJustReleased(0, 32) and movefwd then
+		elseif IsControlJustReleased(0, wkey) and movefwd then
 		    TaskPlayAnimAdvanced(ped, "move_crawl", "onfront_fwd", GetEntityCoords(ped), 1.0, 0.0, GetEntityHeading(ped), 1.0, 1.0, 1.0, 46, 1.0, 0, 0)
 			movefwd = false
-		end		
-		if IsControlJustPressed(0, 33) and not movebwd then
+		end
+		if IsControlJustPressed(0, sKey) and not movebwd then
 			movebwd = true
 		    TaskPlayAnimAdvanced(ped, "move_crawl", "onfront_bwd", GetEntityCoords(ped), 1.0, 0.0, GetEntityHeading(ped), 1.0, 1.0, 1.0, 47, 1.0, 0, 0)
-		elseif IsControlJustReleased(0, 33) and movebwd then 
+		elseif IsControlJustReleased(0, sKey) and movebwd then
 		    TaskPlayAnimAdvanced(ped, "move_crawl", "onfront_bwd", GetEntityCoords(ped), 1.0, 0.0, GetEntityHeading(ped), 1.0, 1.0, 1.0, 46, 1.0, 0, 0)
 		    movebwd = false
 		end
-		if IsControlPressed(0, 34) then
+		if IsControlPressed(0, aKey) then
 			SetEntityHeading(ped, GetEntityHeading(ped)+2.0 )
-		elseif IsControlPressed(0, 35) then
+		elseif IsControlPressed(0, dKey) then
 			SetEntityHeading(ped, GetEntityHeading(ped)-2.0 )
 		end
 	end
